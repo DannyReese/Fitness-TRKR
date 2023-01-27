@@ -1,8 +1,8 @@
 const http = require("http")
 const chalk = require("chalk")
 const app = require("./app")
-
-const PORT = process.env["PORT"] ?? 3000
+require('dotenv').config()
+const PORT = process.env.PORT
 const server = http.createServer(app)
 
 server.listen(PORT, () => {
