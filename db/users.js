@@ -5,12 +5,12 @@ const client = require("./client");
 // user functions
 async function createUser({ username, password }) {
     try{
-     const {rows : user} = await client.query(`
+     const {rows:user} = await client.query(`
       INSERT
       INTO
       users(username,password)
       VALUES($1,$2) RETURNING *;`,[username,password]);
-      console.log('these da users',user);
+      return user;
     }catch(error){throw new Error('cannot create user')}
 }
 
