@@ -18,6 +18,11 @@ return activity
 
 async function getAllActivities() {
   // select and return an array of all activities
+  try{
+    const {rows : activities} = await client.query(`SELECT * FROM activities;`);
+    console.log('these all the activities',activities);
+    return activities
+  }catch(error){throw new Error('cant get all activities')}
 }
 
 async function getActivityById(id) {}
