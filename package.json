@@ -9,6 +9,7 @@
     "start:dev": "nodemon server.js",
     "start": "node server.js",
     "test": "jest --runInBand",
+    "test:watch:db": "jest --watchAll db",
     "test:watch": "jest --runInBand --watchAll"
   },
   "repository": {
