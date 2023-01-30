@@ -17,7 +17,22 @@ async function createUser({ username, password }) {
 }
 
 async function getUser({ username, password }) {
-
+  try{
+    const {rows:[userWeGetting]} = await client.query(`
+    SELECT *
+    FROM users
+    WHERE username=${username};`,[username]);
+    const hashedPassword = userWeGetting.password
+    const comparePasswords = await bcrypt.compare(password,hashedPassword);
+    if(comparePasswords){
+      delete userWeGetting.password
+      return userWeGetting
+    }else{
+      throw new Error('that didnt work')
+    }
+  }catch(error){
+    throw new Error('can\'t get single user')
+  }
 }
 
 async function getUserById(userId) {
