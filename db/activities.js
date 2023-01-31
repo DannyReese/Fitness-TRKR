@@ -4,7 +4,7 @@ const client = require('./client');
 async function createActivity({ name, description }) {
   // return the new activity
   try{
-   const {rows : activity } = await client.query(`
+   const {rows : [activity]} = await client.query(`
     INSERT INTO activities
     (name,description)
     VALUES
@@ -25,15 +25,48 @@ async function getAllActivities() {
   }catch(error){throw new Error('cant get all activities')}
 }
 
-async function getActivityById(id) {}
+async function getActivityById(id) {
+  try{
+    const {rows : [activity] } = await client.query(`
+    SELECT *
+    FROM activities
+    WHERE id=$1;`,[id]);
+    return activity
+  }catch(error){
+    throw new Error('cant get activity by id')
+  }
+}
 
-async function getActivityByName(name) {}
+async function getActivityByName(name) {
+  try{
+    const {rows : [activity]} = await client.query(`
+    SELECT *
+    FROM activities
+    WHERE name=$1;`,[name]);
+    return activity
+  }catch(error){
+    throw new Error('cant get activity by name')
+  }
+}
 
 async function attachActivitiesToRoutines(routines) {
   // select and return an array of all activities
 }
 
 async function updateActivity({ id, ...fields }) {
+  const {name, description} = fields
+  console.log('this the name',name,'this the desc',description)
+  try{
+    const {rows : [activity]} = await client.query(`
+    UPDATE activities 
+    SET name = $1, description = $2
+    WHERE id=$3;
+    `,[name, description, id]);
+
+    return activity
+  }catch(error){
+    throw new Error('cant update activity')
+  }
   // don't try to update the id
   // do update the name and description
   // return the updated activity
