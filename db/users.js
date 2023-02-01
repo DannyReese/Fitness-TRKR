@@ -27,8 +27,8 @@ async function getUser({ username, password }) {
       delete userWeGetting.password
       return userWeGetting
     } else {
-      console.error('that didnt work')
-      return null
+      // console.error('that didnt work')
+      return 
      }
   } catch (error) {
     throw new Error('can\'t get single user')

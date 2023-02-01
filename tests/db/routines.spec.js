@@ -117,7 +117,7 @@ describe("DB Routines", () => {
      and write the addActivityToRoutine function.****/
 
   describe("createRoutine", () => {
-    xit("Creates and returns the new routine", async () => {
+    it("Creates and returns the new routine", async () => {
       const user = await createFakeUser();
       const routine = await createRoutine({
         creatorId: user.id,
@@ -138,7 +138,7 @@ describe("DB Routines", () => {
   });
 
   describe("getAllRoutines", () => {
-    xit("should include the public routine", async () => {
+    it("should include the public routine", async () => {
       const routines = await getAllRoutines();
       expectRoutinesToContainRoutine(routines, fakeRoutine);
     });
@@ -155,7 +155,7 @@ describe("DB Routines", () => {
       expectRoutineToContainActivity(routine, fakeActivity2);
     });
 
-    xit("should not include a routine more than once", async () => {
+xit("should not include a routine more than once", async () => {
       const routines = await getAllRoutines();
       expectRoutinesNotToContainDuplicates(routines, fakeRoutine);
     });
