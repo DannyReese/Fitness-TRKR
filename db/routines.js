@@ -1,5 +1,5 @@
 const client = require("./client");
-
+const {attachActivitiesToRoutines} = require('./activities')
 async function createRoutine({ creatorId, isPublic, name, goal }) {
   try {
     const { rows: [routine] } = await client.query(`
@@ -19,27 +19,26 @@ async function getRoutineById(id) {
     SELECT routines.*,users.username 
     AS "creatorName" FROM
     routines
-    INNER JOIN users 
+    JOIN users 
     ON users.id = routines."creatorId"
     WHERE routines.id=$1`, [id]);
-    if (!routine) {
-      throw {
-        name: "PostNotFoundError",
-        message: "Could not find a post with that postId"
-      };
-    }
-    const { rows: activities } = await client.query(`
-    SELECT * FROM activities;`)
 
-    const { rows: [routineActivity] } = await client.query(`
-    SELECT * FROM routine_activities WHERE "routineId"=$1`, [id]);
+    // if (!routine) {
+    //   throw {
+    //     name: "PostNotFoundError",
+    //     message: "Could not find a post with that postId"
+    //   };
+    // }
+    // const routineWactiviy = await attachActivitiesToRoutines(routine)
+    // console.log(routineWactiviy)
+    // const { rows: [routineActivity] } = await client.query(`
+    // SELECT * FROM routine_activities WHERE "routineId"=$1`, [id]);
 
-    const activityArr = activities.filter(activity => activity.id === routineActivity["activityId"])
-    routine.activities = activityArr
-    routine.duration = routineActivity.duration
-    routine.count = routineActivity.count
+
+    
+    // routineWactiviy.duration = routineActivity.duration
+    // routineWactiviy.count = routineActivity.count
   
-   
     return routine
   } catch (error) {
     throw new Error('cant get routine by id')
@@ -57,14 +56,24 @@ async function getRoutinesWithoutActivities() {
 
 async function getAllRoutines() {
   try {
-    const { rows: ids } = await client.query(`
-    SELECT id FROM routines;`)
-    console.log(ids)
 
-    const routines = await Promise.all(ids.map((id) =>{getRoutineById(id.id)}));
-    console.log(routines)
-   return routines
+    const { rows: ids } = await client.query(`
+    SELECT routines.*,
+    users.username AS "creatorName"
+    FROM routines
+    JOIN users ON users.id = routines."creatorId"
+   `)
+
+    
+    // const final = await Promise.all(ids.map(id => id.activities = attachActivitiesToRoutines(id)));
+    // console.log('this is final',final)
    
+    
+   for(let i = 0 ; i < ids.length;i++){
+    ids[i].activities = await attachActivitiesToRoutines(ids[i])
+   }
+   console.log(ids)
+   return ids;
   } catch (error) { console.log(error) }
 }
 

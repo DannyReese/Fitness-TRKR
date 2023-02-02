@@ -9,7 +9,7 @@ async function createActivity({ name, description }) {
     (name,description)
     VALUES
     ($1,$2)RETURNING *;`, [name, description])
-    console.log(activity)
+    
     return activity
   } catch (error) {
     throw new Error('cant create activity')
@@ -51,10 +51,17 @@ async function getActivityByName(name) {
 }
 
 async function attachActivitiesToRoutines(routines) {
-  try{
-    const {rows : activities} = await client.query(`
-    SELECT * FROM activities;`);
+    try{
+    const {rows : activity} = await client.query(`
+    SELECT 
+    *
+    FROM activities
+    JOIN routine_activities
+    ON routine_activities."activityId" = activities.id
+    WHERE routine_activities."routineId"=$1;`,[routines.id]);
 
+      
+    return activity
   }catch(error){
     throw new Error('cant attach activity to routine')
   }
