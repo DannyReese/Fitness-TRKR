@@ -50,9 +50,8 @@ async function createTables() {
     UNIQUE ("routineId","activityId")
   );`)
   }catch(error){
-    throw new Error(error)
+    throw new Error(error);
   }
-
 }
 
 
