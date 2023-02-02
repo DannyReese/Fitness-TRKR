@@ -54,18 +54,22 @@ async function attachActivitiesToRoutines(routines) {
     try{
     const {rows : activity} = await client.query(`
     SELECT 
-    *
+    activities.*,
+    routine_activities.duration,
+    routine_activities.count,
+    routine_activities.id AS "routineActivityId",
+    routine_activities."routineId"
     FROM activities
     JOIN routine_activities
     ON routine_activities."activityId" = activities.id
     WHERE routine_activities."routineId"=$1;`,[routines.id]);
-
-      
     return activity
   }catch(error){
     throw new Error('cant attach activity to routine')
   }
 }
+
+
 
 async function updateActivity({ id, ...fields }) {
   

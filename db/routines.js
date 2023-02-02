@@ -1,5 +1,5 @@
 const client = require("./client");
-const {attachActivitiesToRoutines} = require('./activities')
+const { attachActivitiesToRoutines } = require('./activities')
 async function createRoutine({ creatorId, isPublic, name, goal }) {
   try {
     const { rows: [routine] } = await client.query(`
@@ -14,7 +14,7 @@ async function createRoutine({ creatorId, isPublic, name, goal }) {
 
 async function getRoutineById(id) {
   try {
-   
+
     const { rows: [routine] } = await client.query(`
     SELECT routines.*,users.username 
     AS "creatorName" FROM
@@ -35,10 +35,10 @@ async function getRoutineById(id) {
     // SELECT * FROM routine_activities WHERE "routineId"=$1`, [id]);
 
 
-    
+
     // routineWactiviy.duration = routineActivity.duration
     // routineWactiviy.count = routineActivity.count
-  
+
     return routine
   } catch (error) {
     throw new Error('cant get routine by id')
@@ -57,27 +57,29 @@ async function getRoutinesWithoutActivities() {
 async function getAllRoutines() {
   try {
 
-    const { rows: ids } = await client.query(`
+    const { rows: routines } = await client.query(`
     SELECT routines.*,
     users.username AS "creatorName"
     FROM routines
     JOIN users ON users.id = routines."creatorId"
    `)
 
+    for (let i = 0; i < routines.length; i++) {
+      routines[i].activities = await attachActivitiesToRoutines(routines[i])
+    }
     
-    // const final = await Promise.all(ids.map(id => id.activities = attachActivitiesToRoutines(id)));
-    // console.log('this is final',final)
-   
-    
-   for(let i = 0 ; i < ids.length;i++){
-    ids[i].activities = await attachActivitiesToRoutines(ids[i])
-   }
-   console.log(ids)
-   return ids;
+    return routines;
   } catch (error) { console.log(error) }
 }
 
-async function getAllPublicRoutines() { }
+async function getAllPublicRoutines() {
+  try {
+    const routines = await getAllRoutines()
+    const pubRoutines = routines.filter(routine => routine && routine.isPublic === true);
+    console.log(pubRoutines);
+    return pubRoutines
+  } catch (error) { throw new Error('cant get puplic routines') }
+}
 
 async function getAllRoutinesByUser({ username }) { }
 
