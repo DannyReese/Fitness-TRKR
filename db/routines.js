@@ -1,5 +1,7 @@
 const client = require("./client");
 const { attachActivitiesToRoutines } = require('./activities')
+
+
 async function createRoutine({ creatorId, isPublic, name, goal }) {
   try {
     const { rows: [routine] } = await client.query(`
@@ -23,22 +25,6 @@ async function getRoutineById(id) {
     ON users.id = routines."creatorId"
     WHERE routines.id=$1`, [id]);
 
-    // if (!routine) {
-    //   throw {
-    //     name: "PostNotFoundError",
-    //     message: "Could not find a post with that postId"
-    //   };
-    // }
-    // const routineWactiviy = await attachActivitiesToRoutines(routine)
-    // console.log(routineWactiviy)
-    // const { rows: [routineActivity] } = await client.query(`
-    // SELECT * FROM routine_activities WHERE "routineId"=$1`, [id]);
-
-
-
-    // routineWactiviy.duration = routineActivity.duration
-    // routineWactiviy.count = routineActivity.count
-
     return routine
   } catch (error) {
     throw new Error('cant get routine by id')
@@ -47,7 +33,9 @@ async function getRoutineById(id) {
 
 async function getRoutinesWithoutActivities() {
   try {
-    const { rows: routine } = await client.query(`SELECT * FROM routines;`);
+    const { rows: routine } = await client.query(`
+    SELECT * 
+    FROM routines;`);
     return routine
   } catch (error) {
     throw new Error('cant get routines')
@@ -56,34 +44,53 @@ async function getRoutinesWithoutActivities() {
 
 async function getAllRoutines() {
   try {
-
     const { rows: routines } = await client.query(`
     SELECT routines.*,
     users.username AS "creatorName"
     FROM routines
     JOIN users ON users.id = routines."creatorId"
-   `)
+   `);
 
     for (let i = 0; i < routines.length; i++) {
       routines[i].activities = await attachActivitiesToRoutines(routines[i])
     }
-    
+
     return routines;
-  } catch (error) { console.log(error) }
+
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 async function getAllPublicRoutines() {
   try {
     const routines = await getAllRoutines()
     const pubRoutines = routines.filter(routine => routine && routine.isPublic === true);
-    console.log(pubRoutines);
+   
     return pubRoutines
   } catch (error) { throw new Error('cant get puplic routines') }
 }
 
-async function getAllRoutinesByUser({ username }) { }
-
-async function getPublicRoutinesByUser({ username }) { }
+async function getAllRoutinesByUser({ username }) { 
+try{
+    const routines = await getAllRoutines()
+    const userRoutines = routines.filter(routine=>routine&&routine.creatorName === username)
+   
+    return userRoutines
+  }catch(error){
+    throw new Error('cant get routine by username')
+  }
+}
+async function getPublicRoutinesByUser({ username }) { 
+  try{
+  const userRoutines = await getAllRoutinesByUser(username)
+  const pubUserRoutines = userRoutines.filter(routine => routine&&routine.isPublic === true)
+  console.log(pubUserRoutines)
+  return pubUserRoutines
+  }catch(error){
+    throw new Error('cant get public user routines')
+  }
+}
 
 async function getPublicRoutinesByActivity({ id }) { }
 
