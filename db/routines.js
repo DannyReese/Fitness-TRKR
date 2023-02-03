@@ -81,20 +81,38 @@ try{
     throw new Error('cant get routine by username')
   }
 }
+
 async function getPublicRoutinesByUser({ username }) { 
   try{
   const pubRoutines = await getAllPublicRoutines()
-  console.log(pubRoutines)
-  console.log(username)
+  
   const pubUserRoutines = pubRoutines.filter(routine => routine&&routine.creatorName === username)
-  console.log(pubUserRoutines)
+
   return pubUserRoutines
   }catch(error){
     throw new Error('cant get public user routines')
   }
 }
 
-async function getPublicRoutinesByActivity({ id }) { }
+async function getPublicRoutinesByActivity({ id }) {
+  try {
+    console.log(id)
+    const pubRoutines = await getAllPublicRoutines()
+    // console.log(pubRoutines[2])
+    // console.log(pubRoutines[2].activities[1].routineId)
+    // const routineFromActivty = pubRoutines.filter(routine=> routine.activities.id === id)
+    for(const routine of pubRoutines){
+      const activtyrout = routine.activities.map(act => act.id === id)
+      if(activtyrout.length){
+        return activtyrout
+      }else{continue}
+    }
+    // console.log(routineFromActivty)
+    // return routineFromActivty[0]
+  } catch (error) {
+    throw new Error('can get public routines by Actvity')
+  }
+ }
 
 async function updateRoutine({ id, ...fields }) { }
 
