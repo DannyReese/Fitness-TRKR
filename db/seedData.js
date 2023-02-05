@@ -5,10 +5,10 @@ const client = require("./client")
 async function dropTables() {
   try{
   console.log("Dropping All Tables...")
-await client.query(`DROP TABLE IF EXISTS routine_activities;`)
-await client.query(`DROP TABLE IF EXISTS routines;`)
-await client.query(`DROP TABLE IF EXISTS activities;`)
-await client.query(`DROP TABLE IF EXISTS users;`)
+    await client.query(`DROP TABLE IF EXISTS routine_activities;`)
+    await client.query(`DROP TABLE IF EXISTS routines;`)
+    await client.query(`DROP TABLE IF EXISTS activities;`)
+    await client.query(`DROP TABLE IF EXISTS users;`)
   }catch(error){
     throw new Error(error)
   }

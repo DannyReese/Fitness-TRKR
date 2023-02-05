@@ -11,7 +11,8 @@ async function createUser({ username, password }) {
       INSERT
       INTO
       users(username,password)
-      VALUES($1,$2) RETURNING *;`, [username, hashedPassword]);
+      VALUES($1,$2) 
+      RETURNING *;`, [username, hashedPassword]);
     delete user.password
     return user;
   } catch (error) { throw new Error('cannot create user') }
@@ -20,30 +21,31 @@ async function createUser({ username, password }) {
 
 async function getUser({ username, password }) {
   try {
+
     const userWeGetting = await getUserByUsername(username)
     const hashedPassword = userWeGetting.password
     const comparePasswords = await bcrypt.compare(password, hashedPassword);
+
     if (comparePasswords) {
       delete userWeGetting.password
       return userWeGetting
     } else {
-      // console.error('that didnt work')
-      return 
-     }
+      return
+    }
   } catch (error) {
     throw new Error('can\'t get single user')
   }
 }
 
 async function getUserById(userId) {
-  try{
-    const {rows:[user]} = await client.query(`
-    SELECT * 
-    FROM users 
-    WHERE id=${userId};`);
+  try {
+    const { rows: [user] } = await client.query(`
+      SELECT * 
+      FROM users 
+      WHERE id=${userId};`);
     delete user.password
     return user
-  }catch(error){
+  } catch (error) {
     throw new Error('cant get user by id')
   }
 }
@@ -51,9 +53,9 @@ async function getUserById(userId) {
 async function getUserByUsername(userName) {
   try {
     const { rows: [user] } = await client.query(`
-    SELECT *
-    FROM users
-    WHERE username=$1;`,[userName]);
+      SELECT *
+      FROM users
+      WHERE username=$1;`, [userName]);
     return user
   } catch (error) {
     throw new Error('cant get user by username')
@@ -61,9 +63,9 @@ async function getUserByUsername(userName) {
 }
 
 
-  module.exports = {
-    createUser,
-    getUser,
-    getUserById,
-    getUserByUsername,
-  }
+module.exports = {
+  createUser,
+  getUser,
+  getUserById,
+  getUserByUsername,
+}

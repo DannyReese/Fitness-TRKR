@@ -46,9 +46,6 @@ async function getAllRoutines() {
     JOIN users ON users.id = routines."creatorId"
    `);
 
-    // for (let i = 0; i < routines.length; i++) {
-    //   routines[i].activities = await attachActivitiesToRoutines(routines[i])
-    // }
     for(const routine of routines){
       routine.activities = await attachActivitiesToRoutines(routine)
     }
@@ -165,6 +162,7 @@ async function destroyRoutine(id) {
     throw new Error('unable to destroy this routine')
   }
  }
+ 
 
 module.exports = {
   getRoutineById,
