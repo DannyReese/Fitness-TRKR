@@ -46,14 +46,17 @@ async function getAllRoutines() {
     JOIN users ON users.id = routines."creatorId"
    `);
 
-    for (let i = 0; i < routines.length; i++) {
-      routines[i].activities = await attachActivitiesToRoutines(routines[i])
+    // for (let i = 0; i < routines.length; i++) {
+    //   routines[i].activities = await attachActivitiesToRoutines(routines[i])
+    // }
+    for(const routine of routines){
+      routine.activities = await attachActivitiesToRoutines(routine)
     }
-
+    
     return routines;
 
   } catch (error) {
-    console.log(error)
+   throw new Error('can\'t get all routines')
   }
 }
 
@@ -61,7 +64,7 @@ async function getAllPublicRoutines() {
   try {
     const routines = await getAllRoutines()
     const pubRoutines = routines.filter(routine => routine && routine.isPublic === true);
-    console.log(pubRoutines[0])
+ 
     return pubRoutines
   } catch (error) { throw new Error('cant get puplic routines') }
 }
