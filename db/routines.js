@@ -113,7 +113,7 @@ async function updateRoutine({ id, ...fields }) {
 
     let returnValue
 
-    if (isPublic !== null && isPublic !== undefined) {
+    if (!isPublic !== null && isPublic !== undefined) {
       const { rows: [updatedRoutine] } = await client.query(`
           UPDATE routines 
           SET "isPublic" = $1
