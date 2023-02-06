@@ -6,7 +6,7 @@ const SALT_COUNT = 10;
 // user functions
 async function createUser({ username, password }) {
     try{
-      const hashedPassword = await bcrypt.hash(password,SALT_COUNT)
+     const hashedPassword = await bcrypt.hash(password,SALT_COUNT)
      const {rows:user} = await client.query(`
       INSERT
       INTO
@@ -28,7 +28,7 @@ async function getUser({ username, password }) {
       delete userWeGetting.password
       return userWeGetting
     }else{
-      throw new Error('that didnt work')
+      throw new Error('sorry that didnt work')
     }
   }catch(error){
     throw new Error('can\'t get single user')
@@ -36,10 +36,29 @@ async function getUser({ username, password }) {
 }
 
 async function getUserById(userId) {
+  try{
+    const{rows:[userId]} = await client.query(`
+    SELECT *
+    FROM users
+    WHERE id=${userId};`);
+    delete user.password
+    return user
+  } catch(error) {
+    throw new Error('cannot get user by the id')
+  }
 
 }
 
 async function getUserByUsername(userName) {
+  try{
+    const {rows:[user]} = await client.query(`
+    SELECT *
+    FROM users
+    WHERE username=$1;`,[userName]); return user;
+  }
+  catch (error){
+  throw new Error('cannot get user by username');
+  }
 
 }
 
