@@ -20,7 +20,6 @@ async function getAllActivities() {
     SELECT * 
     FROM activities;
     `);
-    console.log('these all the activities', activities);
     return activities
   } catch (error) {
     throw new Error('cant get all activities')
@@ -54,7 +53,6 @@ async function getActivityByName(name) {
 }
 
 async function attachActivitiesToRoutines(routines) {
-  // select and return an array of all activities
   try {
     const activities = await getAllActivities();
     return routines.map(routine => {

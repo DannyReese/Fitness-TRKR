@@ -5,8 +5,7 @@ const { attachActivitiesToRoutines } = require('./activities')
 async function createRoutine({ creatorId, isPublic, name, goal }) {
   try {
     const { rows: [routine] } = await client.query(`
-    INSERT INTO routines
-    ("creatorId", "isPublic", name, goal)
+    INSERT INTO routines ("creatorId", "isPublic", name, goal)
     VALUES
     ($1,$2,$3,$4)
     RETURNING *;
@@ -16,24 +15,35 @@ async function createRoutine({ creatorId, isPublic, name, goal }) {
   } catch (error) { throw new Error("Cannot create routine") }
 }
 
-
 async function getRoutineById(id) {
   try {
-    const routines = await getAllRoutines()
-    const routineById = routines.filter(routine => routine.id === id)
-    return routineById
-  } catch (error) {
-    throw new Error("Cannot get routine by id")
+    const { rows: [routine] } = await client.query(`
+    SELECT routines.*, users.username
+    AS "creatorName"
+    FROM routines
+    JOIN users
+    ON users.id = routines."creatorId"
+    WHERE routines.id=$1
+    `, [id]);
+
+    if (!routine) throw new Error("Routine not found");
+
+    routine.activities = await attachActivitiesToRoutines(routine);
+
+    return routine;
+  }
+  catch (error) {
+    throw new Error("Cannot get routine by ID")
   }
 }
 
-
 async function getRoutinesWithoutActivities() {
   try {
-    const { rows: routine } = await client.query(`
+    const { rows: routines } = await client.query(`
     SELECT * 
-    FROM routines;`);
-    return routine
+    FROM routines;
+    `);
+    return routines;
   } catch (error) {
     throw new Error("Cannot get routines without activities")
   }
@@ -42,19 +52,16 @@ async function getRoutinesWithoutActivities() {
 async function getAllRoutines() {
   try {
     const { rows: routines } = await client.query(`
-    SELECT routines.*,
-    users.username AS "creatorName"
+    SELECT routines.*, users.username AS "creatorName"
     FROM routines
-    JOIN users
-    ON users.id = routines."creatorId"
-   `);
+    JOIN users ON users.id = routines."creatorId"
+    `);
 
     for (const routine of routines) {
-      routine.activities = await attachActivitiesToRoutines(routine)
+      routine.activities = await attachActivitiesToRoutines(routine);
     }
 
     return routines;
-
   } catch (error) {
     throw new Error("Cannot get all routines")
   }

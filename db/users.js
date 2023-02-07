@@ -6,12 +6,13 @@ const SALT_COUNT = 10;
 // user functions
 async function createUser({ username, password }) {
   try {
-    const hashedPassword = await bcrypt.hash(password, SALT_COUNT)
+    const hashedPassword = await bcrypt.hash(password, SALT_COUNT);
     const { rows: [user] } = await client.query(`
       INSERT INTO users(username,password)
       VALUES($1,$2)
-      RETURNING id, username;
+      RETURNING *;
       `, [username, hashedPassword]);
+    delete user.password;
     return user;
   } catch (error) {
     throw new Error('Cannot create user')
