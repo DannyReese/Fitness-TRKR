@@ -11,9 +11,13 @@ async function createUser({ username, password }) {
       INSERT
       INTO
       users(username,password)
-      VALUES($1,$2) RETURNING *;`,[username,hashedPassword]);
+      VALUES($1,$2) 
+      RETURNING *;`,
+      [username,hashedPassword]);
+
       return user;
-    }catch(error){throw new Error('cannot create user')}
+    } catch(error){
+      throw new Error('cannot create user')}
 }
 
 async function getUser({ username, password }) {
@@ -27,11 +31,11 @@ async function getUser({ username, password }) {
     if(comparePasswords){
       delete userWeGetting.password
       return userWeGetting
-    }else{
+    } else{
       throw new Error('sorry that didnt work')
     }
-  }catch(error){
-    throw new Error('can\'t get single user')
+  } catch(error){
+    throw new Error('cannot get single user')
   }
 }
 
@@ -42,7 +46,8 @@ async function getUserById(userId) {
     FROM users
     WHERE id=${userId};`);
     delete user.password
-    return user
+
+    return user;
   } catch(error) {
     throw new Error('cannot get user by the id')
   }
@@ -54,10 +59,12 @@ async function getUserByUsername(userName) {
     const {rows:[user]} = await client.query(`
     SELECT *
     FROM users
-    WHERE username=$1;`,[userName]); return user;
-  }
-  catch (error){
-  throw new Error('cannot get user by username');
+    WHERE username=$1;`,
+    [userName]); 
+
+    return user;
+  } catch (error){
+    throw new Error('cannot get user by username');
   }
 
 }

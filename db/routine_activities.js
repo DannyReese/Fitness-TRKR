@@ -8,8 +8,10 @@ async function addActivityToRoutine({
 }){
   try{
  const {rows:routineActivity} = await client.query(`
- INSERT INTO
- "routineActivites"("routineId","activityId",count,duration)
+ INSERT INTO "routineActivites"(
+  "routineId",
+  "activityId",
+  count,duration)
  VALUES($1,$2,$3,$4) 
  RETURNING *;`,
  [routineId,

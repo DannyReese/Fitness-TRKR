@@ -35,7 +35,9 @@ async function getActivityById(id) {
     const {rows:[activity]} = await client.query(`
     SELECT *
     FROM activites
-    WHERE id=$1;`, [id]);
+    WHERE id=$1;`, 
+    [id]);
+
     return activity
   } catch (error) {
     throw new Error('cannot get activity by the id')
@@ -45,9 +47,10 @@ async function getActivityById(id) {
 async function getActivityByName(name) {
   try{
     const {rows:[activity]} = await client.query(`
-    SELECT+
+    SELECT *
     FROM activities 
-    WHERE name=$1;`, [name]);
+    WHERE name=$1;`, 
+    [name]);
 
     return activity 
   } catch (error) {
@@ -66,7 +69,9 @@ async function attachActivitiesToRoutines(routines) {
     routine_activities.id AS "routineActivityId",
     routine_activites."routineId"
     JOIN routine_activites
-    ON routine_activities. "routineId"=$1;`,[routines.id]);
+    ON routine_activities. "routineId"=$1;`,
+    [routines.id]);
+
     return activity
   } catch (error) {
     throw new Error('cannot attach activity to the routine')
@@ -82,11 +87,13 @@ async function updateActivity({ id, ...fields }) {
   let returnValue
 
   try{
+
     if(name) {
       const {rows:[activity]} = await client.query(`
       UPDATE activites 
       SET name = $1
-      WHERE id=$2 RETURNING *;
+      WHERE id=$2 
+      RETURNING *;
       `,[name, id]);
       returnValue = activity
     }
@@ -94,12 +101,13 @@ async function updateActivity({ id, ...fields }) {
       const{rows:[activity]} = await client.query(`
       UPDATE activities 
       SET description = $1
-      WHERE id=$2 RETURNING *;
+      WHERE id=$2 
+      RETURNING *;
       `, [description, id]);
       returnValue= activity 
     }
     if(name === undefined && description === undefined) {
-      throw new Error('fields are undefined')
+      throw new Error('the fields are undefined')
     }
     return returnValue
   } catch(error) {

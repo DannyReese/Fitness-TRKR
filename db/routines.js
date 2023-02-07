@@ -5,17 +5,20 @@ async function createRoutine({ creatorId, isPublic, name, goal }) {
     const {rows : routine} = await client.query(`
     INSERT INTO routines
     ("creatorId", "isPublic", name, goal)
-    VALUES
-    ($1,$2,$3,$4) RETURNING *;`,[creatorId,isPublic,name,goal]);
+    VALUES($1,$2,$3,$4) 
+    RETURNING *;`,
+    [creatorId,isPublic,name,goal]);
 
     return routine
-  }catch(error){throw new Error('no routine made')}
+  } catch(error){
+    throw new Error('no routine was made')}
 }
 
 async function getRoutineById(id) {
   try{
     const routines = await getAllRoutines()
     const routineById = routines.filter(routine => routine.id === id)
+
     return routineById
   } catch (error) {
     throw new Error('cannot get routine by the id')
@@ -27,6 +30,7 @@ async function getRoutinesWithoutActivities() {
     const {rows:routine} = await client.query(
     `SELECT * 
      FROM routines;`);
+
      return routine
   }  catch(error){
      throw new Error('sorry cant get routines')
@@ -44,6 +48,7 @@ async function getAllRoutines() {
     for(const routine of routines) {
       routine.activities = await attachActivitiesToRoutines(routine)
     }
+
     return routines;
   } catch (error) {
     throw new Error('cannot get to all routines')
@@ -54,8 +59,10 @@ async function getAllPublicRoutines() {
   try{
     const routines = await getAllRoutines()
     const pubRoutines = routines.filter(routine => routine && routine.isPublic === true);
+
     return pubRoutines
-  } catch (error) {throw new Error('cannot get to public routines')}
+  } catch (error) {
+    throw new Error('cannot get to public routines')}
 }
 
 async function getAllRoutinesByUser({ username }) {
@@ -69,6 +76,7 @@ async function getAllRoutinesByUser({ username }) {
     for(const routine of routines){
       routine.activites = await attachActivitiesToRoutines(routine)
     }
+
     return routines;
   } catch (error) {
     throw new Error('cannot get to all routines')
@@ -79,6 +87,7 @@ async function getPublicRoutinesByUser({ username }) {
   try{
     const pubRoutines = await getAllPublicRoutines()
     const pubUserRoutines = pubRoutines.filter(routine => routine && routine.creatorName === username)
+
     return pubUserRoutines
   } catch (error) {
     throw new Error('cannot get public users routines')
@@ -112,7 +121,8 @@ async function updateRoutine({ id, ...fields }) {
       const {rows:[updatedRoutine]} = await client.query(`
         UPDATE routines
         SET "isPublic" = $1
-        WHERE id=$2 RETRUNING *;
+        WHERE id=$2 
+        RETRUNING *;
       `,[isPublic, id]);
       returnValue = updatedRoutine 
     }
@@ -120,7 +130,8 @@ async function updateRoutine({ id, ...fields }) {
       const {rows:[updatedRoutine]} = await client.query(`
       UPDATE routines
       SET name = $1
-      WHERE id=$2 RETURNING *;
+      WHERE id=$2 
+      RETURNING *;
       `,[name, id]);
       returnValue = updateRoutine
     }
@@ -128,7 +139,8 @@ async function updateRoutine({ id, ...fields }) {
       const{ rows: [updatedRoutine]} = await client.query(`
       UPDATE routines
       SET goal =$1
-      WHERE id=$2 RETURNING *;
+      WHERE id=$2 
+      RETURNING *;
       `,[goal, id]);
       returnValue = updatedRoutine
     }
@@ -136,7 +148,8 @@ async function updateRoutine({ id, ...fields }) {
       throw new Error('fields are now undefined')
     }
     return returnValue
-  } catch(error) {throw new Error('cannot update this routine')}
+  } catch(error) {
+    throw new Error('cannot update this routine')}
 }
 
 async function destroyRoutine(id) {}
