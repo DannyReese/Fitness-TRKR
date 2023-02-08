@@ -65,7 +65,7 @@ router.post('/login',async(req,res,next)=>{
         })
     }
     try{
-        console.log('hi')
+       
         const user = await getUserByUsername(username);
         const hashedPassword = user.password
         const comparePasswords = await bcrypt.compare(password, hashedPassword);
@@ -73,7 +73,7 @@ router.post('/login',async(req,res,next)=>{
         if(comparePasswords){
             const jwt = require('jsonwebtoken')
             const token = jwt.sign({id:user.id,username:user.username},process.env.JWT_SECRET)
-            res.send({ message: "you're logged in!",token:token,user});
+            res.send({ message: "you're logged in!",token,user});
 
             
         }else{
