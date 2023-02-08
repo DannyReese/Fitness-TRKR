@@ -22,13 +22,14 @@ router.use(async (req, res, next) => {
                 req.user = await getUserById(id);
                 next();
             }
-        } catch ({ name, message }) {
-            next({ name, message });
+        } catch ({ name, message,error }) {
+            next({ name, message,error });
         }
     } else {
         next({
             name: 'AuthorizationHeaderError',
-            message: `Authorization token nust start with ${prefix}`
+            message: `Authorization token must start with ${prefix}`
+         
         });
     }
 });
@@ -62,9 +63,6 @@ const routineActivitiesRouter = require('./routineActivities');
 router.use('/routine_activities', routineActivitiesRouter);
 
 
-router.use((error,req,res,next)=>{
-    res.status(404).send({message:error.message})
- 
-})
+
 
 module.exports = router;

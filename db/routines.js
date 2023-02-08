@@ -81,6 +81,7 @@ async function getAllRoutinesByUser({ username }) {
 
 async function getPublicRoutinesByUser({ username }) {
   try {
+   
     const pubRoutines = await getAllPublicRoutines()
 
     const pubUserRoutines = pubRoutines.filter(routine => routine && routine.creatorName === username)
