@@ -21,7 +21,7 @@ async function createUser({ username, password }) {
 
 async function getUser({ username, password }) {
   try {
-
+    console.log(password)
     const userWeGetting = await getUserByUsername(username)
     const hashedPassword = userWeGetting.password
     const comparePasswords = await bcrypt.compare(password, hashedPassword);
@@ -30,7 +30,7 @@ async function getUser({ username, password }) {
       delete userWeGetting.password
       return userWeGetting
     } else {
-      return
+      return null
     }
   } catch (error) {
     throw new Error('can\'t get single user')
