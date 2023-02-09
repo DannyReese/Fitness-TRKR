@@ -36,13 +36,13 @@ router.use(async (req, res, next) => {
 
 router.use((req,res,next)=>{
     if(req.user){
-        console.log('user is set:',req.user);
+        // console.log('user is set:',req.user);
     }
     next();
 })
 
 // GET /api/health
-router.get('/health',(req, res, next) => {
+router.get('/health',(req, res) => {
     res.send({message:'is healthy'})
 });
 

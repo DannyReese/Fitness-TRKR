@@ -10,7 +10,7 @@ app.use(morgan('dev'));
 app.use(express.json());
 
 app.use((req,res,next)=>{
-    console.log('beginning router');
+    // console.log('beginning router');
     
     next()
 })

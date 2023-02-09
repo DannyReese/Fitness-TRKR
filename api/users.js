@@ -5,7 +5,7 @@ const { getAllRoutinesByUser, getUserByUsername, createUser, getPublicRoutinesBy
 
 
 router.use((req, res, next) => {
-    console.log('A USER request is being made');
+    // console.log('A USER request is being made');
 
     next();
 });
