@@ -7,7 +7,7 @@ require("dotenv").config();
 const faker = require("faker");
 const client = require("../../db/client");
 const {
-  getRoutineById,
+ 
   getAllRoutines,
   getAllPublicRoutines,
   getAllRoutinesByUser,
@@ -155,7 +155,11 @@ describe("DB Routines", () => {
       expectRoutineToContainActivity(routine, fakeActivity2);
     });
 
+<<<<<<< HEAD
     it("should not include a routine more than once", async () => {
+=======
+it("should not include a routine more than once", async () => {
+>>>>>>> 7d810a0c7ca71be8b7693329eacf4074df363420
       const routines = await getAllRoutines();
       expectRoutinesNotToContainDuplicates(routines, fakeRoutine);
     });
