@@ -8,30 +8,6 @@ router.use((req, res, next) => {
     next()
 })
 // GET /api/activities/:activityId/routines
-router.get('/:activityId/routines', async (req, res) => {
-
-    try {
-
-        const id = req.params.activityId
-        console.log(req.params.activityId)
-        console.log(id)
-        const activities = await getPublicRoutinesByActivity({id});
-        if (activities) {
-            res.send(activities)
-        } else {
-            res.send({
-                error: "error",
-                message: `Activity ${req.params.activityId} not found`,
-                name: 'name'
-            })
-        }
-
-    }
-    catch (error) {
-        throw new Error('cant get public routines that include this activity')
-    }
-
-})
 
 // GET /api/activities
 router.get('/', async (req, res, next) => {
@@ -44,6 +20,31 @@ router.get('/', async (req, res, next) => {
     }
 })
 
+router.get('/:activityId/routines', async (req, res) => {
+
+    try {
+        const activityId = req.params
+        
+        activityId.id = parseInt(activityId.activityId)
+      
+        const activities = await getPublicRoutinesByActivity(activityId);
+  
+        if (activities.length) {
+            res.send(activities)
+        } else {
+            res.send({
+                error: "error",
+                message: `Activity ${req.params.id} not found`,
+                name: 'name'
+            })
+        }
+
+    }
+    catch (error) {
+        throw new Error('cant get public routines that include this activity')
+    }
+
+})
 
 
 // POST /api/activities
@@ -89,7 +90,7 @@ router.patch('/:activityId', async (req, res) => {
                 name: 'NameTaken'
             })
             :
-            updatedActivity.activity = await updateActivity({ id, fields });
+            updatedActivity.activity = await updateActivity({ id, name:fields.name,description:fields.description});
         res.send(updatedActivity.activity)
 
     } else {

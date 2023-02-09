@@ -77,7 +77,7 @@ async function attachActivitiesToRoutines(routines) {
 
 async function updateActivity({ id, ...fields }) {
  
-  const { name, description } = fields.fields
+  const { name, description } = fields
  
 
   let returnValue

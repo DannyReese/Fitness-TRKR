@@ -1,7 +1,7 @@
 /*
-
+​
 DO NOT CHANGE THIS FILE
-
+​
 */
 require("dotenv").config();
 const request = require("supertest");
@@ -19,6 +19,8 @@ const {
 } = require("../expectHelpers");
 
 const { ActivityExistsError, ActivityNotFoundError } = require("../../errors");
+
+
 
 const { arrayContaining } = expect;
 
@@ -185,3 +187,7 @@ describe("/api/activities", () => {
     });
   });
 });
+
+
+
+

@@ -19,6 +19,7 @@ async function getRoutineById(id) {
   try {
     const routines = await getAllRoutines()
     const routineById = routines.filter(routine => routine.id === id)
+
     return routineById
   } catch (error) {
     throw new Error('cant get routine by id')
@@ -46,14 +47,14 @@ async function getAllRoutines() {
     JOIN users ON users.id = routines."creatorId"
    `);
 
-    for(const routine of routines){
+    for (const routine of routines) {
       routine.activities = await attachActivitiesToRoutines(routine)
     }
-    
+
     return routines;
 
   } catch (error) {
-   throw new Error('can\'t get all routines')
+    throw new Error('can\'t get all routines')
   }
 }
 
@@ -61,7 +62,7 @@ async function getAllPublicRoutines() {
   try {
     const routines = await getAllRoutines()
     const pubRoutines = routines.filter(routine => routine && routine.isPublic === true);
- 
+
     return pubRoutines
   } catch (error) { throw new Error('cant get puplic routines') }
 }
@@ -81,7 +82,7 @@ async function getAllRoutinesByUser({ username }) {
 
 async function getPublicRoutinesByUser({ username }) {
   try {
-   
+
     const pubRoutines = await getAllPublicRoutines()
 
     const pubUserRoutines = pubRoutines.filter(routine => routine && routine.creatorName === username)
@@ -91,26 +92,24 @@ async function getPublicRoutinesByUser({ username }) {
     throw new Error('cant get public user routines')
   }
 }
-async function getPublicRoutinesByActivity( {id} ) {
-console.log(id)
-  const actRoutine={}
+async function getPublicRoutinesByActivity({id}) {
+
   try {
     const pubRoutines = await getAllPublicRoutines()
-  
     for (const routine of pubRoutines) {
-      actRoutine.act = routine.activities.filter(act => act.id === id)
-     
-      if (actRoutine.act.length > 0) {
-        const routine = await getRoutineById(actRoutine.act[0].routineId)
-        
+      const actRoutine = routine.activities.filter(act => act.id === id)
+      if (actRoutine.length > 0) {
+        const routine = await getRoutineById(actRoutine[0].routineId)
         return routine
       }
     }
-
+    return []
   } catch (error) {
+
     throw new Error('can get public routines by Actvity')
   }
 }
+
 
 async function updateRoutine({ id, ...fields }) {
   try {
@@ -147,13 +146,13 @@ async function updateRoutine({ id, ...fields }) {
     if (name === undefined && isPublic === undefined && goal === undefined) {
       throw new Error('fields are undefined')
     }
-   
+
     return returnValue
   } catch (error) { throw new Error('cant update this routine') }
 }
 
 async function destroyRoutine(id) {
-  try{
+  try {
 
     await client.query(`
     DELETE FROM
@@ -162,12 +161,12 @@ async function destroyRoutine(id) {
     await client.query(`
     DELETE FROM
     routines WHERE id=${id};`);
-  
-  }catch(error){
+
+  } catch (error) {
     throw new Error('unable to destroy this routine')
   }
- }
- 
+}
+
 
 module.exports = {
   getRoutineById,
