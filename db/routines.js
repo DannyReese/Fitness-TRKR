@@ -91,10 +91,12 @@ async function getPublicRoutinesByUser({ username }) {
     throw new Error('cant get public user routines')
   }
 }
-async function getPublicRoutinesByActivity({ id }) {
+async function getPublicRoutinesByActivity( {id} ) {
+console.log(id)
   const actRoutine={}
   try {
     const pubRoutines = await getAllPublicRoutines()
+  
     for (const routine of pubRoutines) {
       actRoutine.act = routine.activities.filter(act => act.id === id)
      

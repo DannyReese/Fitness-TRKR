@@ -12,10 +12,10 @@ router.get('/:activityId/routines', async (req, res) => {
 
     try {
 
-        const id = req.params
+        const id = req.params.activityId
         console.log(req.params.activityId)
         console.log(id)
-        const activities = await getPublicRoutinesByActivity(req.params.activityId);
+        const activities = await getPublicRoutinesByActivity({id});
         if (activities) {
             res.send(activities)
         } else {
