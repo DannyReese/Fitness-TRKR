@@ -1,6 +1,7 @@
 const express = require('express');
-const { getAllPublicRoutines } = require('../db');
+const { getAllPublicRoutines, createRoutine } = require('../db');
 const routinesRouter = express.Router();
+const { requireUser } = require('./utils');
 
 routinesRouter.use((req, res, next) => {
     next();
@@ -25,9 +26,22 @@ routinesRouter.get("/", async (req, res, next) => {
 
 // POST /api/routines
 routinesRouter.post("/", requireUser async (req, res, next) => {
-    const { isPublic, name, goal } = req.body;
-    const creatorId = req.user.id
-})
+    try {
+        const { isPublic, name, goal } = req.body;
+        const creatorId = req.user.id;
+        const routine = await createRoutine({ creatorId, isPublic, name, goal });
+
+        if (routine) {
+            res.send(routine);
+        }
+        else {
+            next(error);
+        }
+    }
+    catch (error) {
+        next(error)
+    }
+});
 
 // PATCH /api/routines/:routineId
 
