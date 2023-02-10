@@ -1,6 +1,6 @@
 const express = require('express');
 const { getAllPublicRoutines } = require('../db');
-const router = express.Router();
+const routinesRouter = express.Router();
 
 routinesRouter.use((req, res, next) => {
     next();
@@ -24,6 +24,10 @@ routinesRouter.get("/", async (req, res, next) => {
 });
 
 // POST /api/routines
+routinesRouter.post("/", requireUser async (req, res, next) => {
+    const { isPublic, name, goal } = req.body;
+    const creatorId = req.user.id
+})
 
 // PATCH /api/routines/:routineId
 
