@@ -24,7 +24,7 @@ router.get('/:activityId/routines', async (req, res) => {
 
     try {
         const activityId = req.params
-        
+
         activityId.id = parseInt(activityId.activityId)
       
         const activities = await getPublicRoutinesByActivity(activityId);

@@ -17,7 +17,9 @@ async function createRoutine({ creatorId, isPublic, name, goal }) {
 
 async function getRoutineById(id) {
   try {
+   
     const routines = await getAllRoutines()
+    
     const routineById = routines.filter(routine => routine.id === id)
 
     return routineById
@@ -113,8 +115,10 @@ async function getPublicRoutinesByActivity({id}) {
 
 async function updateRoutine({ id, ...fields }) {
   try {
+    console.log(fields)
+    console.log(id)
     const { isPublic, name, goal } = fields
-
+   
     let returnValue
 
     if (!isPublic !== null && isPublic !== undefined) {
