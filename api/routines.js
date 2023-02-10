@@ -35,7 +35,7 @@ routinesRouter.post("/", requireUser async (req, res, next) => {
             res.send(routine);
         }
         else {
-            next(error);
+            res.send(error);
         }
     }
     catch (error) {
