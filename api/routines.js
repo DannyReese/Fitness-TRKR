@@ -25,23 +25,25 @@ routinesRouter.get("/", async (req, res, next) => {
 });
 
 // POST /api/routines
-routinesRouter.post("/", requireUser async (req, res, next) => {
+routinesRouter.post('/', async (req, res) => {
     try {
-        const { isPublic, name, goal } = req.body;
-        const creatorId = req.user.id;
-        const routine = await createRoutine({ creatorId, isPublic, name, goal });
-
-        if (routine) {
-            res.send(routine);
+        const user = req.user
+        if (user) {
+            const fields = req.body;
+            fields.creatorId = user.id;
+            const newRoutine = await createRoutine(fields);
+            res.send(newRoutine);
+        } else {
+            res.send({
+                error: 'must be logged in',
+                message: "You must be logged in to perform this action",
+                name: "NotLoggedIn"
+            });
         }
-        else {
-            res.send(error);
-        }
+    } catch (error) {
+        throw new Error('Cannot create routine')
     }
-    catch (error) {
-        next(error)
-    }
-});
+})
 
 // PATCH /api/routines/:routineId
 
