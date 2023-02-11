@@ -17,12 +17,15 @@ async function createRoutine({ creatorId, isPublic, name, goal }) {
 
 async function getRoutineById(id) {
   try {
-   
-    const routines = await getAllRoutines()
-    
-    const routineById = routines.filter(routine => routine.id === id)
 
-    return routineById
+    const routines = await getAllRoutines()
+
+    const routineById = routines.filter(routine => routine.id === id)
+    if (routineById.length) {
+      return routineById
+    } else {
+      return false
+    }
   } catch (error) {
     throw new Error('cant get routine by id')
   }
@@ -72,6 +75,7 @@ async function getAllPublicRoutines() {
 
 async function getAllRoutinesByUser({ username }) {
   try {
+  
     const routines = await getAllRoutines()
     const userRoutines = routines.filter(routine => routine && routine.creatorName === username)
 
@@ -94,7 +98,7 @@ async function getPublicRoutinesByUser({ username }) {
     throw new Error('cant get public user routines')
   }
 }
-async function getPublicRoutinesByActivity({id}) {
+async function getPublicRoutinesByActivity({ id }) {
 
   try {
     const pubRoutines = await getAllPublicRoutines()
@@ -115,10 +119,9 @@ async function getPublicRoutinesByActivity({id}) {
 
 async function updateRoutine({ id, ...fields }) {
   try {
-    console.log(fields)
-    console.log(id)
+ 
     const { isPublic, name, goal } = fields
-   
+
     let returnValue
 
     if (!isPublic !== null && isPublic !== undefined) {

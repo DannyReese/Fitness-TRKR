@@ -12,10 +12,15 @@ async function createUser({ username, password }) {
       INTO
       users(username,password)
       VALUES($1,$2) 
-      RETURNING *;`, [username, hashedPassword]);
+      ON CONFLICT (username) DO NOTHING 
+      RETURNING *;`, [username,hashedPassword]);
+    if(user){
     delete user.password
     return user;
-  } catch (error) { throw new Error('cannot create user') }
+    }else{
+      console.error('name aleady used')
+    }
+  } catch (error) { console.warn(error)}
 }
 
 
@@ -50,13 +55,15 @@ async function getUserById(userId) {
   }
 }
 
-async function getUserByUsername(userName) {
+async function getUserByUsername(username) {
   try {
-    const { rows: [user] } = await client.query(`
+
+    const { rows: user } = await client.query(`
       SELECT *
-      FROM users
-      WHERE username=$1;`, [userName]);
-    return user
+      FROM users;`);
+      const users = user.filter(u => u.username === username)
+     
+    return users[0]
   } catch (error) {
     throw new Error('cant get user by username')
   }

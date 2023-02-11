@@ -12,7 +12,6 @@ router.use((req, res, next) => {
 // POST /api/users/register
 router.post('/register', async (req, res, next) => {
     const { username, password } = req.body;
-
     try {
         const xuser = await getUserByUsername(username);
         if (xuser) {
@@ -33,7 +32,6 @@ router.post('/register', async (req, res, next) => {
             username,
             password,
         });
-
         const jwt = require('jsonwebtoken')
         const token = jwt.sign({
             id: user.id,
@@ -41,7 +39,6 @@ router.post('/register', async (req, res, next) => {
         }, process.env.JWT_SECRET, {
             expiresIn: '1w'
         });
-
         res.send({
             message: 'Thank You For Signing Up!',
             token,
@@ -54,7 +51,7 @@ router.post('/register', async (req, res, next) => {
 })
 
 // POST /api/users/login
-router.post('/login', async (req, res) => {
+router.post('/login', async (req, res,next) => {
     const { username, password } = req.body;
 
     if (!username || !password) {
@@ -81,11 +78,11 @@ router.post('/login', async (req, res) => {
         }
 
     } catch (error) {
-        throw new Error('unable to log in');
+      next(error)
     }
 });
 // GET /api/users/me
-router.get('/me', async (req, res) => {
+router.get('/me', async (req, res, next) => {
     try {
         const user = req.user
         if (user) {
@@ -102,26 +99,28 @@ router.get('/me', async (req, res) => {
         }
 
     } catch (error) {
-        throw new Error('invalid user');
+       next(error)
     }
 });
 // GET /api/users/:username/routines
-router.get('/:username/routines', async (req, res) => {
-    const user = req.user.username;
-    const username = req.params.username;
+router.get('/:username/routines', async (req, res,next) => {
+    
     try {
-        if (username === user) {
-            const username = req.user.username;
-            const routines = await getAllRoutinesByUser({ username });
+    const user = req.user;
+    const username = req.params.username;
+        if (username === user.username) {
+          
+            const routines = await getAllRoutinesByUser(user);
+           
             res.send(routines);
 
         } else {
-            const routines = await getPublicRoutinesByUser({ username });
+            const routines = await getPublicRoutinesByUser({username});
             res.send(routines);
 
         }
     } catch (error) {
-        throw new Error('cannot get routines for this user');
+        next(error)
     }
 });
 
