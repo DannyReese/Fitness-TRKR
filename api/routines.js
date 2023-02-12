@@ -1,7 +1,6 @@
 const express = require('express');
-const { getAllPublicRoutines, createRoutine } = require('../db');
+const { getAllPublicRoutines, createRoutine, updateRoutine } = require('../db');
 const routinesRouter = express.Router();
-const { requireUser } = require('./utils');
 
 routinesRouter.use((req, res, next) => {
     next();
@@ -43,9 +42,33 @@ routinesRouter.post('/', async (req, res) => {
     } catch (error) {
         throw new Error('Cannot create routine')
     }
-})
+});
 
 // PATCH /api/routines/:routineId
+routinesRouter.patch('/:routineId', async (req, res, next) => {
+    try {
+        const id = req.params.routineId;
+        const { isPublic, name, goal } = req.body;
+        const updatedRoutine = await updateRoutine({ id, isPublic, name, goal });
+
+        if (!req.user) {
+            next({
+                name: 'MissingUserError',
+                message: 'User is required'
+            });
+        }
+
+        if (updatedRoutine) {
+            res.send(updatedRoutine);
+        }
+        else {
+            next(error)
+        }
+    }
+    catch (error) {
+        next(error)
+    }
+});
 
 // DELETE /api/routines/:routineId
 
