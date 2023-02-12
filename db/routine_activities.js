@@ -6,8 +6,8 @@ async function addActivityToRoutine({
   count,
   duration,
 }){
-  try{
- const { rows:routineActivity } = await client.query(`
+ try{
+  const { rows:routineActivity } = await client.query(`
  INSERT INTO "routineActivites"(
   "routineId",
   "activityId",
@@ -45,7 +45,8 @@ async function getRoutineActivitiesByRoutine({ id }) {
     const { rows:routineActivity } = await client.query(`
     SELECT *
     FROM routine_activities 
-    WHERE "routineId" = ${id}`);
+    WHERE "routineId" = 
+    ${id}`);
 
     return routineActivity;
   } catch(error){
@@ -64,7 +65,8 @@ async function updateRoutineActivity({ id, ...fields }) {
     SET count = $1
     WHERE id=$2
     RETURNING *;`,
-    [count, id]);
+    [count, 
+      id]);
 
     returnValue = updatedRoutineActivity
   }
@@ -83,7 +85,8 @@ async function updateRoutineActivity({ id, ...fields }) {
   return returnValue;
 } catch(error){
   throw new Error('cannot update the routine_activity ')
-}
+ }
+} 
 
 async function destroyRoutineActivity(id) {
   try{
