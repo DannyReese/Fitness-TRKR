@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllPublicRoutines, createRoutine, updateRoutine, getRoutineById, destroyRoutine } = require('../db');
+const { getAllPublicRoutines, createRoutine, updateRoutine, getRoutineById, destroyRoutine, addActivityToRoutine } = require('../db');
 const routinesRouter = express.Router();
 
 routinesRouter.use((req, res, next) => {
@@ -99,5 +99,40 @@ routinesRouter.delete('/:routineId', async (req, res, next) => {
 });
 
 // POST /api/routines/:routineId/activities
+routinesRouter.post('/:routineId/activities', async (req, res, next) => {
+    try {
+        const routineId = req.params.routineId;
+        const { activityId, count, duration } = req.body;
+        const routine = await getRoutineById(routineId);
+        const activity = await addActivityToRoutine({ routineId, activityId, count, duration });
+
+        if (!routine) {
+            next({
+                name: 'NoRoutineError',
+                message: 'No routine exists'
+            });
+        }
+
+        if (!req.user) {
+            next({
+                name: 'MissingUserError',
+                message: 'User is required'
+            });
+        }
+
+        if (req.user.id === routine.creatorId) {
+            res.send(activity);
+        }
+        else {
+            next({
+                name: 'NotCreatorError',
+                message: 'Only the creator can post'
+            });
+        }
+    }
+    catch (error) {
+        next(error)
+    }
+})
 
 module.exports = router;
