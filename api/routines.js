@@ -106,13 +106,14 @@ router.delete('/:routineId', async (req, res, next) => {
 // POST /api/routines/:routineId/activities
 router.post('/:routineId/activities', async (req, res, next) => {
     try {
-        const routineId = {}
-        routineId.id = parseInt(req.params.routineId)
+
+        const routineId = parseInt(req.params.routineId)
         const activity = req.body
+        const activityId = activity.activityId
 
-        const routineO = await getRoutineById(routineId.id)
+        const routine = await getRoutineById(routineId)
 
-        const arr = routineO[0].activities.filter(a => a.id === activity.activityId)
+        const arr = routine[0].activities.filter(a => a.id === activityId)
 
         if (!arr.length) {
             const returnVal = await addActivityToRoutine(activity)
