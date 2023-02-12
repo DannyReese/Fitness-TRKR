@@ -1,5 +1,5 @@
 const express = require('express');
-const { getAllPublicRoutines, createRoutine, updateRoutine } = require('../db');
+const { getAllPublicRoutines, createRoutine, updateRoutine, getRoutineById, destroyRoutine } = require('../db');
 const routinesRouter = express.Router();
 
 routinesRouter.use((req, res, next) => {
@@ -71,6 +71,32 @@ routinesRouter.patch('/:routineId', async (req, res, next) => {
 });
 
 // DELETE /api/routines/:routineId
+routinesRouter.delete('/:routineId', async (req, res, next) => {
+    try {
+        const { routineId } = req.params;
+        const routine = await getRoutineById(routineId);
+        const deleteRoutine = await destroyRoutine(routineId);
+
+        if (!req.user) {
+            next({
+                name: 'MissingUserError',
+                message: 'User is required to delete'
+            });
+        }
+        else if (req.user.id !== routine.creatorId) {
+            next({
+                name: 'NotCreatorError',
+                message: 'Only the creator can delete'
+            });
+        }
+        else {
+            res.send(deleteRoutine);
+        }
+    }
+    catch (error) {
+        next(error)
+    }
+});
 
 // POST /api/routines/:routineId/activities
 
