@@ -1,7 +1,13 @@
 /* eslint-disable no-useless-catch */
 const express = require("express");
 const router = express.Router();
-const { getAllRoutinesByUser, getUserByUsername, createUser, getPublicRoutinesByUser, getUserById, getUser } = require('../db')
+const { getAllRoutinesByUser,
+    getUserByUsername,
+    createUser,
+    getPublicRoutinesByUser,
+    getUserById,
+    getUser 
+} = require('../db')
 
 
 router.use((req, res, next) => {
@@ -32,7 +38,7 @@ router.post('/register', async (req, res, next) => {
             username,
             password,
         });
-        const jwt = require('jsonwebtoken')
+        const jwt = require('jsonwebtoken');
         const token = jwt.sign({
             id: user.id,
             username,
@@ -51,7 +57,7 @@ router.post('/register', async (req, res, next) => {
 })
 
 // POST /api/users/login
-router.post('/login', async (req, res,next) => {
+router.post('/login', async (req, res, next) => {
     const { username, password } = req.body;
 
     if (!username || !password) {
@@ -78,13 +84,14 @@ router.post('/login', async (req, res,next) => {
         }
 
     } catch (error) {
-      next(error)
+        next(error);
     }
 });
+
 // GET /api/users/me
 router.get('/me', async (req, res, next) => {
     try {
-        const user = req.user
+        const user = req.user;
         if (user) {
             const { id } = req.user;
             const user = await getUserById(id);
@@ -99,28 +106,28 @@ router.get('/me', async (req, res, next) => {
         }
 
     } catch (error) {
-       next(error)
+        next(error);
     }
 });
 // GET /api/users/:username/routines
-router.get('/:username/routines', async (req, res,next) => {
-    
+router.get('/:username/routines', async (req, res, next) => {
+
     try {
-    const user = req.user;
-    const username = req.params.username;
+        const user = req.user;
+        const username = req.params.username;
         if (username === user.username) {
-          
+
             const routines = await getAllRoutinesByUser(user);
-           
+
             res.send(routines);
 
         } else {
-            const routines = await getPublicRoutinesByUser({username});
+            const routines = await getPublicRoutinesByUser({ username });
             res.send(routines);
 
         }
     } catch (error) {
-        next(error)
+        next(error);
     }
 });
 

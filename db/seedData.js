@@ -1,38 +1,44 @@
 // require in the database adapter functions as you write them (createUser, createActivity...)
- const {createUser,createActivity,createRoutine ,getRoutinesWithoutActivities,getAllActivities,addActivityToRoutine} = require('./');
-const client = require("./client")
+const { createUser,
+  createActivity,
+  createRoutine,
+  getRoutinesWithoutActivities,
+  getAllActivities,
+  addActivityToRoutine
+} = require('./');
+const client = require("./client");
 
 async function dropTables() {
-  try{
-  console.log("Dropping All Tables...")
-    await client.query(`DROP TABLE IF EXISTS routine_activities;`)
-    await client.query(`DROP TABLE IF EXISTS routines;`)
-    await client.query(`DROP TABLE IF EXISTS activities;`)
-    await client.query(`DROP TABLE IF EXISTS users;`)
-  }catch(error){
-    throw new Error(error)
+  try {
+    console.log("Dropping All Tables...")
+    await client.query(`DROP TABLE IF EXISTS routine_activities;`);
+    await client.query(`DROP TABLE IF EXISTS routines;`);
+    await client.query(`DROP TABLE IF EXISTS activities;`);
+    await client.query(`DROP TABLE IF EXISTS users;`);
+  } catch (error) {
+    throw new Error(error);
   }
 }
-  // drop all tables, in the correct order
+// drop all tables, in the correct order
 
 
 async function createTables() {
-  console.log("Starting to build tables...")
-  try{
-  // create all tables, in the correct order
-  await client.query(`
+  console.log("Starting to build tables...");
+  try {
+    // create all tables, in the correct order
+    await client.query(`
     CREATE TABLE users(
     id SERIAL PRIMARY KEY,
     username VARCHAR(255) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL);`);
 
-  await client.query(`
+    await client.query(`
   CREATE TABLE activities(
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) UNIQUE NOT NULL,
     description TEXT NOT NULL);`);
-  
-  await client.query(`
+
+    await client.query(`
   CREATE TABLE routines(
     id SERIAL PRIMARY KEY,
     "creatorId" INTEGER REFERENCES users(id),
@@ -40,7 +46,7 @@ async function createTables() {
     name VARCHAR(255) UNIQUE NOT NULL,
     goal TEXT NOT NULL);`);
 
-  await client.query(`
+    await client.query(`
   CREATE TABLE routine_activities(
     id SERIAL PRIMARY KEY,
     "routineId" INTEGER REFERENCES routines(id),
@@ -48,9 +54,9 @@ async function createTables() {
     duration INTEGER,
     count INTEGER,
     UNIQUE ("routineId","activityId")
-  );`)
-  }catch(error){
-    throw new Error(error)
+  );`);
+  } catch (error) {
+    throw new Error(error);
   }
 
 }

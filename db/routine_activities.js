@@ -20,9 +20,9 @@ async function addActivityToRoutine({
       RETURNING *;`,
       [routineId, activityId, count, duration]);
 
-    return routineActivity
+    return routineActivity;
   } catch (error) {
-    throw new Error('cant add activity to "routineActivites"')
+    throw new Error('cant add activity to "routineActivites"');
   }
 }
 
@@ -38,7 +38,7 @@ async function getRoutineActivityById(id) {
     return routineActivity;
 
   } catch (error) {
-    throw new Error('cannot get routine_activity by id')
+    throw new Error('cannot get routine_activity by id');
   }
 }
 
@@ -52,14 +52,14 @@ async function getRoutineActivitiesByRoutine({ id }) {
     return routineActivity;
 
   } catch (error) {
-    throw new Error('cannot get routine_activity by routine')
+    throw new Error('cannot get routine_activity by routine');
   }
 }
 
 async function updateRoutineActivity({ id, ...fields }) {
   try {
-    const { count, duration } = fields
-    let returnValue
+    const { count, duration } = fields;
+    const returnValue = {};
 
     if (count) {
       const { rows: [updatedRoutineActivity] } = await client.query(`
@@ -68,7 +68,7 @@ async function updateRoutineActivity({ id, ...fields }) {
         WHERE id=$2 
         RETURNING *;`, [count, id]);
 
-        returnValue = updatedRoutineActivity
+        returnValue.updateRoutineActivity = updatedRoutineActivity;
     }
 
     if (duration) {
@@ -78,13 +78,13 @@ async function updateRoutineActivity({ id, ...fields }) {
         WHERE id=$2 
         RETURNING *;`, [duration, id]);
 
-        returnValue = updatedRoutineActivity
+        returnValue.updateRoutineActivity = updatedRoutineActivity;
     }
 
-    return returnValue
+    return returnValue.updateRoutineActivity;
 
   } catch (error) {
-    throw new Error('cannot update routine_activity')
+    throw new Error('cannot update routine_activity');
   }
 }
 
@@ -95,9 +95,9 @@ async function destroyRoutineActivity(id) {
       WHERE id=$1 
       RETURNING *;`, [id]);
 
-    return deletedRoutine
+    return deletedRoutine;
   } catch (error) {
-    throw new Error('cannot delete routine activity')
+    throw new Error('cannot delete routine activity');
   }
 }
 
@@ -117,12 +117,12 @@ async function canEditRoutineActivity(routineActivityId, userId) {
       [routineId.routineId]);
 
     if (routineCreatorId.creatorId === userId) {
-      return true
+      return true;
     } else {
-      return false
+      return false;
     }
   } catch (error) {
-    throw new Error('cannot answer if user can edit')
+    throw new Error('cannot answer if user can edit');
   }
 }
 

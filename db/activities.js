@@ -3,18 +3,18 @@ const client = require('./client');
 // database functions
 async function createActivity({ name, description }) {
   // return the new activity
-  
+
   try {
     const { rows: [activity] } = await client.query(`
       INSERT INTO activities
       (name,description)
       VALUES($1,$2)
-      RETURNING *;`, 
-      [name, description])
-   
-    return activity
+      RETURNING *;`,
+      [name, description]);
+
+    return activity;
   } catch (error) {
-    throw new Error('cant create activity')
+    throw new Error('cant create activity');
   }
 
 }
@@ -24,10 +24,12 @@ async function getAllActivities() {
   try {
     const { rows: activities } = await client.query(`
       SELECT * 
-      FROM activities;`); 
-  
-    return activities
-  } catch (error) { throw new Error('cant get all activities') }
+      FROM activities;`);
+
+    return activities;
+  } catch (error) { 
+    throw new Error('cant get all activities');
+ }
 }
 
 async function getActivityById(id) {
@@ -36,9 +38,9 @@ async function getActivityById(id) {
       SELECT *
       FROM activities
       WHERE id=$1;`, [id]);
-    return activity
+    return activity;
   } catch (error) {
-    throw new Error('cant get activity by id')
+    throw new Error('cant get activity by id');
   }
 }
 
@@ -48,15 +50,15 @@ async function getActivityByName(name) {
       SELECT *
       FROM activities
       WHERE name=$1;`, [name]);
-    return activity
+    return activity;
   } catch (error) {
-    throw new Error('cant get activity by name')
+    throw new Error('cant get activity by name');
   }
 }
 
 async function attachActivitiesToRoutines(routines) {
-    try{
-    const {rows : activity} = await client.query(`
+  try {
+    const { rows: activity } = await client.query(`
       SELECT 
       activities.*,
       routine_activities.duration,
@@ -66,21 +68,21 @@ async function attachActivitiesToRoutines(routines) {
       FROM activities
       JOIN routine_activities
       ON routine_activities."activityId" = activities.id
-      WHERE routine_activities."routineId"=$1;`,[routines.id]);
-    return activity
-  }catch(error){
-    throw new Error('cant attach activity to routine')
+      WHERE routine_activities."routineId"=$1;`, [routines.id]);
+    return activity;
+  } catch (error) {
+    throw new Error('cant attach activity to routine');
   }
 }
 
 
 
 async function updateActivity({ id, ...fields }) {
- 
-  const { name, description } = fields
- 
 
-  let returnValue
+  const { name, description } = fields;
+
+
+  const returnValue = {};
 
   try {
     if (name) {
@@ -89,7 +91,7 @@ async function updateActivity({ id, ...fields }) {
         SET name = $1
         WHERE id=$2 RETURNING *;
         `, [name, id]);
-      returnValue = activity
+      returnValue.activity = activity;
     }
 
     if (description) {
@@ -98,17 +100,17 @@ async function updateActivity({ id, ...fields }) {
         SET description = $1
         WHERE id=$2 RETURNING *;
         `, [description, id]);
-      returnValue = activity
+      returnValue.activity = activity;
     }
 
-    if(name === undefined && description === undefined){
-      throw new Error('fields are undefined')
+    if (name === undefined && description === undefined) {
+      throw new Error('fields are undefined');
     }
-   
-    return returnValue
+
+    return returnValue.activity;
 
   } catch (error) {
-    throw new Error('cant update activity')
+    throw new Error('cant update activity');
   }
 }
 

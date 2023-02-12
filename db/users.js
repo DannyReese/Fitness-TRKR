@@ -13,32 +13,32 @@ async function createUser({ username, password }) {
       users(username,password)
       VALUES($1,$2) 
       ON CONFLICT (username) DO NOTHING 
-      RETURNING *;`, [username,hashedPassword]);
-    if(user){
-    delete user.password
-    return user;
-    }else{
-      console.error('name aleady used')
+      RETURNING *;`, [username, hashedPassword]);
+    if (user) {
+      delete user.password;
+      return user;
+    } else {
+      console.error('name aleady used');
     }
-  } catch (error) { console.warn(error)}
+  } catch (error) { console.warn(error) }
 }
 
 
 async function getUser({ username, password }) {
   try {
-  
-    const userWeGetting = await getUserByUsername(username)
-    const hashedPassword = userWeGetting.password
+
+    const userWeGetting = await getUserByUsername(username);
+    const hashedPassword = userWeGetting.password;
     const comparePasswords = await bcrypt.compare(password, hashedPassword);
 
     if (comparePasswords) {
-      delete userWeGetting.password
-      return userWeGetting
+      delete userWeGetting.password;
+      return userWeGetting;
     } else {
-      return null
+      return false;
     }
   } catch (error) {
-    throw new Error('can\'t get single user')
+    throw new Error('can\'t get single user');
   }
 }
 
@@ -48,10 +48,10 @@ async function getUserById(userId) {
       SELECT * 
       FROM users 
       WHERE id=${userId};`);
-    delete user.password
-    return user
+    delete user.password;
+    return user;
   } catch (error) {
-    throw new Error('cant get user by id')
+    throw new Error('cant get user by id');
   }
 }
 
@@ -61,11 +61,11 @@ async function getUserByUsername(username) {
     const { rows: user } = await client.query(`
       SELECT *
       FROM users;`);
-      const users = user.filter(u => u.username === username)
-     
+    const users = user.filter(u => u.username === username);
+
     return users[0]
   } catch (error) {
-    throw new Error('cant get user by username')
+    throw new Error('cant get user by username');
   }
 }
 

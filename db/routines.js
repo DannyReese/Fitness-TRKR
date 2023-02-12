@@ -10,24 +10,26 @@ async function createRoutine({ creatorId, isPublic, name, goal }) {
     VALUES
     ($1,$2,$3,$4) RETURNING *;`, [creatorId, isPublic, name, goal]);
 
-    return routine
-  } catch (error) { throw new Error('no routine made') }
+    return routine;
+  } catch (error) {
+    throw new Error('no routine made');
+  }
 }
 
 
 async function getRoutineById(id) {
   try {
 
-    const routines = await getAllRoutines()
+    const routines = await getAllRoutines();
 
-    const routineById = routines.filter(routine => routine.id === id)
+    const routineById = routines.filter(routine => routine.id === id);
     if (routineById.length) {
-      return routineById
+      return routineById;
     } else {
-      return false
+      return false;
     }
   } catch (error) {
-    throw new Error('cant get routine by id')
+    throw new Error('cant get routine by id');
   }
 }
 
@@ -37,9 +39,9 @@ async function getRoutinesWithoutActivities() {
     const { rows: routine } = await client.query(`
     SELECT * 
     FROM routines;`);
-    return routine
+    return routine;
   } catch (error) {
-    throw new Error('cant get routines')
+    throw new Error('cant get routines');
   }
 }
 
@@ -53,35 +55,37 @@ async function getAllRoutines() {
    `);
 
     for (const routine of routines) {
-      routine.activities = await attachActivitiesToRoutines(routine)
+      routine.activities = await attachActivitiesToRoutines(routine);
     }
 
     return routines;
 
   } catch (error) {
-    throw new Error('can\'t get all routines')
+    throw new Error('can\'t get all routines');
   }
 }
 
 async function getAllPublicRoutines() {
   try {
-    const routines = await getAllRoutines()
+    const routines = await getAllRoutines();
     const pubRoutines = routines.filter(routine => routine && routine.isPublic === true);
 
-    return pubRoutines
-  } catch (error) { throw new Error('cant get puplic routines') }
+    return pubRoutines;
+  } catch (error) {
+    throw new Error('cant get puplic routines');
+  }
 }
 
 
 async function getAllRoutinesByUser({ username }) {
   try {
-  
-    const routines = await getAllRoutines()
-    const userRoutines = routines.filter(routine => routine && routine.creatorName === username)
 
-    return userRoutines
+    const routines = await getAllRoutines();
+    const userRoutines = routines.filter(routine => routine && routine.creatorName === username);
+
+    return userRoutines;
   } catch (error) {
-    throw new Error('cant get routine by username')
+    throw new Error('cant get routine by username');
   }
 }
 
@@ -89,40 +93,40 @@ async function getAllRoutinesByUser({ username }) {
 async function getPublicRoutinesByUser({ username }) {
   try {
 
-    const pubRoutines = await getAllPublicRoutines()
+    const pubRoutines = await getAllPublicRoutines();
 
-    const pubUserRoutines = pubRoutines.filter(routine => routine && routine.creatorName === username)
+    const pubUserRoutines = pubRoutines.filter(routine => routine && routine.creatorName === username);
 
-    return pubUserRoutines
+    return pubUserRoutines;
   } catch (error) {
-    throw new Error('cant get public user routines')
+    throw new Error('cant get public user routines');
   }
 }
 async function getPublicRoutinesByActivity({ id }) {
 
   try {
-    const pubRoutines = await getAllPublicRoutines()
+    const pubRoutines = await getAllPublicRoutines();
     for (const routine of pubRoutines) {
-      const actRoutine = routine.activities.filter(act => act.id === id)
+      const actRoutine = routine.activities.filter(act => act.id === id);
       if (actRoutine.length > 0) {
-        const routine = await getRoutineById(actRoutine[0].routineId)
-        return routine
+        const routine = await getRoutineById(actRoutine[0].routineId);
+        return routine;
       }
     }
-    return []
+    return [];
   } catch (error) {
 
-    throw new Error('can get public routines by Actvity')
+    throw new Error('can get public routines by Actvity');
   }
 }
 
 
 async function updateRoutine({ id, ...fields }) {
   try {
- 
-    const { isPublic, name, goal } = fields
 
-    let returnValue
+    const { isPublic, name, goal } = fields;
+
+    const returnValue = {};
 
     if (!isPublic !== null && isPublic !== undefined) {
       const { rows: [updatedRoutine] } = await client.query(`
@@ -130,7 +134,7 @@ async function updateRoutine({ id, ...fields }) {
           SET "isPublic" = $1
           WHERE id=$2 RETURNING *;
           `, [isPublic, id]);
-      returnValue = updatedRoutine
+      returnValue.updatedRoutine = updatedRoutine;
     }
 
     if (name) {
@@ -139,7 +143,7 @@ async function updateRoutine({ id, ...fields }) {
           SET name = $1
           WHERE id=$2 RETURNING *;
           `, [name, id]);
-      returnValue = updatedRoutine
+      returnValue.updatedRoutine = updatedRoutine;
     }
 
     if (goal) {
@@ -148,14 +152,16 @@ async function updateRoutine({ id, ...fields }) {
           SET goal = $1
           WHERE id=$2 RETURNING *;
           `, [goal, id]);
-      returnValue = updatedRoutine
+      returnValue.updatedRoutine = updatedRoutine;
     }
     if (name === undefined && isPublic === undefined && goal === undefined) {
-      throw new Error('fields are undefined')
+      throw new Error('fields are undefined');
     }
 
-    return returnValue
-  } catch (error) { throw new Error('cant update this routine') }
+    return returnValue.updatedRoutine;
+  } catch (error) {
+    throw new Error('cant update this routine');
+  }
 }
 
 async function destroyRoutine(id) {
@@ -170,7 +176,7 @@ async function destroyRoutine(id) {
     routines WHERE id=${id};`);
 
   } catch (error) {
-    throw new Error('unable to destroy this routine')
+    throw new Error('unable to destroy this routine');
   }
 }
 
