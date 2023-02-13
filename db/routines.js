@@ -152,7 +152,25 @@ async function updateRoutine({ id, ...fields }) {
     throw new Error('cannot update this routine')}
 }
 
-async function destroyRoutine(id) {}
+async function destroyRoutine(id) {
+  try{
+    await client.query(`
+    DELETE 
+    FROM routine_activities
+    WHERE "routineId"=
+    ${id};`);
+
+    await client.query(`
+    DELETE 
+    FROM routines
+    WHERE id=
+    ${id};`);
+    
+  } catch(error) {
+    throw new Error('cannot destroy the routine');
+    
+  }
+}
 
 module.exports = {
   getRoutineById,
