@@ -1,6 +1,6 @@
 /* eslint-disable no-useless-catch */
 const express = require("express");
-const router = express.Router();
+const usersRouter = express.Router();
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET = 'secret_pass' } = process.env;
 const {
@@ -13,7 +13,7 @@ router.use((req, res, next) => {
 });
 
 // POST /api/users/register
-router.post('/register', async (req, res, next) => {
+usersRouter.post('/register', async (req, res, next) => {
     try {
         const { username, password } = req.body;
         const userExists = getUserByUsername(username);
@@ -60,4 +60,4 @@ router.post('/register', async (req, res, next) => {
 
 // GET /api/users/:username/routines
 
-module.exports = router;
+module.exports = usersRouter;

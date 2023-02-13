@@ -131,4 +131,4 @@ routinesRouter.post('/:routineId/activities', async (req, res, next) => {
     }
 })
 
-module.exports = router;
+module.exports = routinesRouter;
